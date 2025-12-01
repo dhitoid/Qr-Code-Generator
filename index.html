@@ -28,7 +28,7 @@
 }
 
 /* ------------------------------
-   FIXED TOGGLE BUTTON
+   THEME TOGGLE BUTTON
 ------------------------------ */
 #themeToggle {
     position: fixed;
@@ -39,25 +39,17 @@
     border-radius: 50%;
     background: var(--card-bg);
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--input-border);
     box-shadow: 0 6px 20px rgba(0,0,0,0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background .25s, transform .2s;
+    transition: .25s;
     z-index: 999;
 }
 
-#themeToggle:active {
-    transform: scale(.9);
-}
-
-#themeIcon {
-    font-size: 22px;
-    pointer-events: none;
-}
+#themeIcon { font-size: 22px; pointer-events: none; }
 
 /* ------------------------------
    LAYOUT
@@ -68,7 +60,7 @@ body {
     font-family: "Inter", sans-serif;
     background: var(--bg);
     color: var(--text);
-    transition: background .3s, color .3s;
+    transition: .3s;
 }
 
 .container {
@@ -78,18 +70,79 @@ body {
     border-radius: 20px;
     background: var(--card-bg);
     backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
     box-shadow: 0 18px 45px var(--shadow);
 }
 
 h2 {
     text-align: center;
     font-weight: 800;
-    margin-bottom: 20px;
 }
 
 /* ------------------------------
-   INPUT GLASS STYLE (IOS)
+   CUSTOM DROPDOWN (GLASS STYLE)
+------------------------------ */
+.dropdown {
+    width: 100%;
+    position: relative;
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+.dropdown-selected {
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--field-bg);
+    border: 1px solid var(--input-border);
+    backdrop-filter: blur(18px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    color: var(--text);
+    transition: .25s ease;
+}
+
+.dropdown .arrow {
+    font-size: 14px;
+    opacity: .7;
+    transition: transform .25s;
+}
+
+.dropdown-list {
+    position: absolute;
+    width: 100%;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 14px;
+    box-shadow: 0 12px 30px var(--shadow);
+    border: 1px solid var(--input-border);
+    margin-top: 6px;
+    display: none;
+    overflow: hidden;
+    z-index: 9;
+}
+
+.dropdown-list div {
+    padding: 14px;
+    cursor: pointer;
+    transition: .2s;
+    color: var(--text);
+}
+
+.dropdown-list div:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+:root.dark .dropdown-list div:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.dropdown.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* ------------------------------
+   INPUT GLASS
 ------------------------------ */
 .input-glass {
     width: 100%;
@@ -98,34 +151,19 @@ h2 {
     border: 1px solid var(--input-border);
     background: var(--field-bg);
     backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
     font-size: 15px;
     color: var(--text);
     margin-bottom: 15px;
-    appearance: none;
-    transition: .25s ease;
-}
-
-/* custom arrow */
-select.input-glass {
-    background-image: url("data:image/svg+xml;utf8,<svg fill='black' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 6 5-6'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 16px;
-}
-
-:root.dark select.input-glass {
-    background-image: url("data:image/svg+xml;utf8,<svg fill='white' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 6 5-6'/></svg>");
+    transition: .2s;
 }
 
 .input-glass:focus {
     outline: none;
     border-color: #007aff;
-    background: rgba(255,255,255,0.45);
 }
 
 /* ------------------------------
-   BUTTONS
+   BUTTON
 ------------------------------ */
 button {
     width: 100%;
@@ -134,28 +172,21 @@ button {
     border: none;
     background: #007aff;
     color: white;
+    font-size: 17px;
     font-weight: 600;
     margin-top: 10px;
-    font-size: 17px;
     cursor: pointer;
     transition: .2s;
 }
 
-button:hover {
-    transform: scale(1.03);
-}
+button:hover { transform: scale(1.03); }
 
-.download-btn {
-    background: #00c48f;
-}
+.download-btn { background: #00c48f; }
 
 /* ------------------------------
    QR CARD
 ------------------------------ */
-#previewCard {
-    display: none;
-    margin-top: 25px;
-}
+#previewCard { display: none; margin-top: 25px; }
 
 .card {
     width: 300px;
@@ -164,30 +195,14 @@ button:hover {
     padding: 22px;
     border-radius: 20px;
     margin: auto;
-    box-shadow: 0 10px 35px var(--shadow);
     text-align: center;
 }
 
-.card-logo {
-    width: 65px;
-    margin-bottom: 10px;
-}
+.card-logo { width: 65px; margin-bottom: 10px; }
+#qrcode canvas { border-radius: 20px; }
+.card-title { font-size: 18px; font-weight: 700; }
+.card-caption { margin-top: 12px; opacity: .8; }
 
-#qrcode canvas {
-    border-radius: 20px;
-}
-
-.card-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-.card-caption {
-    margin-top: 12px;
-    font-size: 14px;
-    opacity: 0.8;
-}
 </style>
 </head>
 <body>
@@ -200,16 +215,26 @@ button:hover {
 <div class="container">
     <h2>QR Generator by Dhito</h2>
 
+    <!-- CUSTOM DROPDOWN -->
     <label>Jenis QR</label>
-    <select id="qrType" class="input-glass" onchange="updateFields()">
-        <option value="wa">WhatsApp</option>
-        <option value="ig">Instagram</option>
-        <option value="maps">Google Maps</option>
-        <option value="wifi">WiFi</option>
-        <option value="vcard">vCard Kontak</option>
-        <option value="link">Link / URL</option>
-        <option value="text">Text</option>
-    </select>
+    <div class="dropdown" id="qrTypeDropdown">
+        <div class="dropdown-selected" onclick="toggleDropdown()">
+            <span id="qrTypeLabel">WhatsApp</span>
+            <span class="arrow">▼</span>
+        </div>
+        <div class="dropdown-list" id="dropdownList">
+            <div onclick="selectQR('wa','WhatsApp')">WhatsApp</div>
+            <div onclick="selectQR('ig','Instagram')">Instagram</div>
+            <div onclick="selectQR('maps','Google Maps')">Google Maps</div>
+            <div onclick="selectQR('wifi','WiFi')">WiFi</div>
+            <div onclick="selectQR('vcard','vCard Kontak')">vCard Kontak</div>
+            <div onclick="selectQR('link','Link / URL')">Link / URL</div>
+            <div onclick="selectQR('text','Text')">Text</div>
+        </div>
+    </div>
+
+    <!-- HIDDEN VALUE -->
+    <input type="hidden" id="qrType" value="wa">
 
     <div id="formFields"></div>
 
@@ -241,6 +266,33 @@ const logos = {
     vcard: "https://cdn-icons-png.flaticon.com/512/1828/1828479.png",
     text: "https://cdn-icons-png.flaticon.com/512/1827/1827955.png"
 };
+
+/* ------------------------------
+   CUSTOM DROPDOWN SCRIPT
+------------------------------ */
+function toggleDropdown() {
+    const dd = document.getElementById("qrTypeDropdown");
+    const list = document.getElementById("dropdownList");
+
+    dd.classList.toggle("open");
+    list.style.display = dd.classList.contains("open") ? "block" : "none";
+}
+
+function selectQR(value, label) {
+    document.getElementById("qrType").value = value;
+    document.getElementById("qrTypeLabel").innerText = label;
+
+    toggleDropdown();
+    updateFields();
+}
+
+document.addEventListener("click", function(e) {
+    const dd = document.getElementById("qrTypeDropdown");
+    if (!dd.contains(e.target)) {
+        dd.classList.remove("open");
+        document.getElementById("dropdownList").style.display = "none";
+    }
+});
 
 /* ------------------ FORM HANDLER ------------------ */
 function updateFields() {
