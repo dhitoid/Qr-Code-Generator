@@ -247,7 +247,22 @@ function updateFields() {
 
     f.innerHTML = html;
 }
+
+document.getElementById("qrType").addEventListener("change", () => {
+    // Sembunyikan preview
+    document.getElementById("previewCard").style.display = "none";
+
+    // Hapus QR canvas bila ada
+    document.getElementById("qrcode").innerHTML = "";
+
+    // Reset konten kartu
+    document.getElementById("logo").src = "";
+    document.getElementById("cardTitle").innerText = "";
+    document.getElementById("caption").innerText = "";
+});
+
 updateFields();
+
 
 /* ------------------ QR GENERATE ------------------ */
 function generateQR() {
@@ -395,16 +410,24 @@ function downloadCard() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Render HTML → canvas (vector + sharp)
-    html2canvas(card, {
-        backgroundColor: null,
-        scale: scale,
-        useCORS: true
-    }).then((cv) => {
-        const link = document.createElement("a");
-        link.download = "qr-card.png";
-        link.href = cv.toDataURL("image/png", 1.0);
-        link.click();
-    });
+html2canvas(card, {
+    backgroundColor: "#ffffff",
+    scale: scale,
+    useCORS: true,
+    onclone: (doc) => {
+        // Tingkatkan ketajaman QR sebelum dirender
+        const q = doc.getElementById("qrcode").querySelector("canvas");
+        if (q) {
+            q.style.filter = "contrast(200%) brightness(120%)";
+        }
+    }
+})
+.then((cv) => {
+    const link = document.createElement("a");
+    link.download = "qr-card.png";
+    link.href = cv.toDataURL("image/png", 1.0);
+    link.click();
+});
 }
 </script>
 
