@@ -223,6 +223,43 @@ button:hover { transform: scale(1.03); }
     }
 }
 
+/* ===========================
+   ANIMASI DROPDOWN POP (iOS)
+=========================== */
+.select-pop {
+    animation: popSelect .25s cubic-bezier(.25, .46, .45, .94);
+}
+
+@keyframes popSelect {
+    0%   { transform: scale(.97); opacity: .8; }
+    60%  { transform: scale(1.03); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+/* ===========================
+   ANIMASI QR CARD MUNCUL
+=========================== */
+.qr-appear {
+    opacity: 0;
+    transform: translateY(10px) scale(.92);
+    animation: qrDrop .32s cubic-bezier(.25, .46, .45, .94) forwards;
+}
+
+@keyframes qrDrop {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(.92);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1.03);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 </style>
 </head>
 <body>
@@ -276,6 +313,14 @@ button:hover { transform: scale(1.03); }
 <script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
 
 <script>
+const qrTypeSelect = document.getElementById("qrType");
+
+qrTypeSelect.addEventListener("mousedown", () => {
+    qrTypeSelect.classList.remove("select-pop");
+    void qrTypeSelect.offsetWidth; // reset animation
+    qrTypeSelect.classList.add("select-pop");
+});
+
 /* LOGO FIX CORS */
 const logos = {
     wa: "https://cdn-icons-png.flaticon.com/512/733/733585.png",
@@ -483,7 +528,15 @@ END:VCARD`;
     document.getElementById("logo").src = logos[type];
     document.getElementById("cardTitle").innerText = title;
     document.getElementById("caption").innerText = captionText;
-    document.getElementById("previewCard").style.display = "block";
+    const prev = document.getElementById("previewCard");
+prev.style.display = "block";
+
+// apply QR animation
+const card = document.getElementById("cardWrapper");
+card.classList.remove("qr-appear"); 
+void card.offsetWidth; // reset anim
+card.classList.add("qr-appear");
+
 }
 
 /* ------------------ DOWNLOAD ------------------ */
