@@ -7,78 +7,68 @@
 
 <style>
 /* ------------------------------
-   THEME (AUTO LIGHT/DARK)
+   THEME (AUTO + MANUAL)
 ------------------------------ */
 :root {
     --bg: #f0f4ff;
     --card-bg: rgba(255,255,255,0.65);
+    --field-bg: rgba(255,255,255,0.28);
     --text: #222;
     --shadow: rgba(0,0,0,0.15);
+    --input-border: rgba(255,255,255,0.35);
 }
 
-/* LIGHT MODE (FORCED) */
-:root.light {
-    --bg: #f0f4ff;
-    --card-bg: rgba(255,255,255,0.65);
-    --text: #222;
-    --shadow: rgba(0,0,0,0.15);
-}
-
-/* DARK MODE (FORCED) */
 :root.dark {
     --bg: #0d0d0d;
-    --card-bg: rgba(20,20,20,0.6);
+    --card-bg: rgba(20,20,20,0.55);
+    --field-bg: rgba(40,40,40,0.45);
     --text: #fff;
-    --shadow: rgba(0,0,0,0.7);
+    --shadow: rgba(0,0,0,0.55);
+    --input-border: rgba(255,255,255,0.15);
 }
 
-/* --------------------------------
-   MANUAL THEME TOGGLE BUTTON
--------------------------------- */
+/* ------------------------------
+   FIXED TOGGLE BUTTON
+------------------------------ */
 #themeToggle {
     position: fixed;
     top: 18px;
     right: 18px;
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 6px 20px var(--shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--input-border);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: .3s ease;
-    z-index: 99;
+    transition: background .25s, transform .2s;
+    z-index: 999;
 }
 
-#themeToggle:hover {
-    transform: scale(1.08);
+#themeToggle:active {
+    transform: scale(.9);
 }
 
 #themeIcon {
-    font-size: 20px;
+    font-size: 22px;
+    pointer-events: none;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg: #0d0d0d;
-        --card-bg: rgba(20,20,20,0.6);
-        --text: #fff;
-        --shadow: rgba(0,0,0,0.7);
-    }
-}
-
+/* ------------------------------
+   LAYOUT
+------------------------------ */
 body {
     margin: 0;
     padding: 20px;
     font-family: "Inter", sans-serif;
     background: var(--bg);
     color: var(--text);
-    transition: .4s ease;
-    -webkit-font-smoothing: antialiased;
+    transition: background .3s, color .3s;
 }
 
 .container {
@@ -87,61 +77,67 @@ body {
     padding: 25px;
     border-radius: 20px;
     background: var(--card-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
     box-shadow: 0 18px 45px var(--shadow);
-    animation: fade .8s ease;
-}
-
-@keyframes fade {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
 }
 
 h2 {
     text-align: center;
-    margin-bottom: 20px;
     font-weight: 800;
-    font-size: 26px;
+    margin-bottom: 20px;
 }
 
-/* Inputs */
-label {
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: block;
-}
-
-select, input, textarea {
+/* ------------------------------
+   INPUT GLASS STYLE (IOS)
+------------------------------ */
+.input-glass {
     width: 100%;
-    padding: 14px;
+    padding: 14px 16px;
     border-radius: 14px;
-    border: none;
-    background: rgba(255,255,255,0.7);
-    margin-bottom: 15px;
+    border: 1px solid var(--input-border);
+    background: var(--field-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     font-size: 15px;
-    transition: .2s;
+    color: var(--text);
+    margin-bottom: 15px;
+    appearance: none;
+    transition: .25s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-    select, input, textarea {
-        background: rgba(40,40,40,0.7);
-        color: white;
-    }
+/* custom arrow */
+select.input-glass {
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 6 5-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
 }
 
-/* Buttons */
+:root.dark select.input-glass {
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 6 5-6'/></svg>");
+}
+
+.input-glass:focus {
+    outline: none;
+    border-color: #007aff;
+    background: rgba(255,255,255,0.45);
+}
+
+/* ------------------------------
+   BUTTONS
+------------------------------ */
 button {
     width: 100%;
-    padding: 14px;
-    border: none;
+    padding: 15px;
     border-radius: 14px;
+    border: none;
     background: #007aff;
     color: white;
-    font-size: 17px;
     font-weight: 600;
-    cursor: pointer;
     margin-top: 10px;
+    font-size: 17px;
+    cursor: pointer;
     transition: .2s;
 }
 
@@ -149,30 +145,36 @@ button:hover {
     transform: scale(1.03);
 }
 
-/* --- QR CARD --- */
+.download-btn {
+    background: #00c48f;
+}
+
+/* ------------------------------
+   QR CARD
+------------------------------ */
 #previewCard {
     display: none;
     margin-top: 25px;
-    text-align: center;
 }
 
 .card {
     width: 300px;
     background: var(--card-bg);
     backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
     padding: 22px;
     border-radius: 20px;
     margin: auto;
     box-shadow: 0 10px 35px var(--shadow);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    text-align: center;
 }
 
 .card-logo {
     width: 65px;
     margin-bottom: 10px;
+}
+
+#qrcode canvas {
+    border-radius: 20px;
 }
 
 .card-title {
@@ -181,38 +183,16 @@ button:hover {
     margin-bottom: 12px;
 }
 
-#qrcode {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#qrcode canvas {
-    display: block !important;
-    border-radius: 20px; /* ROUNDED QR */
-    animation: pop .35s ease;
-}
-
-@keyframes pop {
-    from { transform: scale(.85); opacity: 0; }
-    to   { transform: scale(1); opacity: 1; }
-}
-
 .card-caption {
     margin-top: 12px;
     font-size: 14px;
     opacity: 0.8;
 }
-
-.download-btn {
-    background: #00c48f;
-    margin-top: 15px;
-}
 </style>
 </head>
 <body>
-   
-   <!-- THEME TOGGLE -->
+
+<!-- THEME TOGGLE -->
 <div id="themeToggle" onclick="toggleTheme()">
     <span id="themeIcon">🌙</span>
 </div>
@@ -221,7 +201,7 @@ button:hover {
     <h2>QR Generator by Dhito</h2>
 
     <label>Jenis QR</label>
-    <select id="qrType" onchange="updateFields()">
+    <select id="qrType" class="input-glass" onchange="updateFields()">
         <option value="wa">WhatsApp</option>
         <option value="ig">Instagram</option>
         <option value="maps">Google Maps</option>
@@ -266,56 +246,67 @@ const logos = {
 function updateFields() {
     let type = document.getElementById("qrType").value;
     let f = document.getElementById("formFields");
+
     let html = "";
 
     if (type === "wa") html = `
         <label>No WhatsApp</label>
-        <input id="waNum" placeholder="628123456789">
+        <input id="waNum" class="input-glass" placeholder="628123456789">
         <label>Pesan</label>
-        <input id="waMsg" placeholder="Halo...">
+        <input id="waMsg" class="input-glass" placeholder="Halo...">
     `;
 
-    if (type === "ig") html = `<label>Username IG</label><input id="igUser">`;
+    if (type === "ig") html = `
+        <label>Username IG</label>
+        <input id="igUser" class="input-glass">
+    `;
 
-    if (type === "maps") html = `<label>Link Google Maps</label><input id="maps">`;
+    if (type === "maps") html = `
+        <label>Link Google Maps</label>
+        <input id="maps" class="input-glass">
+    `;
 
     if (type === "wifi") html = `
-        <label>SSID</label><input id="ssid">
-        <label>Password</label><input id="pass">
+        <label>SSID</label>
+        <input id="ssid" class="input-glass">
+        <label>Password</label>
+        <input id="pass" class="input-glass">
         <label>Keamanan</label>
-        <select id="security"><option>WPA</option><option>WEP</option><option>None</option></select>
+        <select id="security" class="input-glass">
+            <option>WPA</option>
+            <option>WEP</option>
+            <option>None</option>
+        </select>
     `;
 
     if (type === "vcard") html = `
-        <label>Nama</label><input id="vname">
-        <label>No HP</label><input id="vphone">
-        <label>Email</label><input id="vmail">
+        <label>Nama</label>
+        <input id="vname" class="input-glass">
+        <label>No HP</label>
+        <input id="vphone" class="input-glass">
+        <label>Email</label>
+        <input id="vmail" class="input-glass">
     `;
 
-    if (type === "link") html = `<label>URL</label><input id="data" placeholder="https://...">`;
+    if (type === "link") html = `
+        <label>URL</label>
+        <input id="data" class="input-glass" placeholder="https://...">
+    `;
 
-    if (type === "text") html = `<label>Teks</label><textarea id="textData"></textarea>`;
+    if (type === "text") html = `
+        <label>Teks</label>
+        <textarea id="textData" class="input-glass"></textarea>
+    `;
 
     f.innerHTML = html;
-}
 
-document.getElementById("qrType").addEventListener("change", () => {
-    // Sembunyikan preview
     document.getElementById("previewCard").style.display = "none";
-
-    // Hapus QR canvas bila ada
     document.getElementById("qrcode").innerHTML = "";
-
-    // Reset konten kartu
-    document.getElementById("logo").src = "";
-    document.getElementById("cardTitle").innerText = "";
-    document.getElementById("caption").innerText = "";
-});
+}
 
 updateFields();
 
-
-/* ------------------ QR GENERATE ------------------ */
+/* ------------------ GENERATE QR ------------------ */
 function generateQR() {
     let type = document.getElementById("qrType").value;
     let text = "";
@@ -378,7 +369,6 @@ END:VCARD`;
     const container = document.getElementById("qrcode");
     container.innerHTML = "";
 
-    // === Step 1 — Biarkan QRious buat QR aslinya ===
     const qr = new QRious({
         value: text,
         size: 260,
@@ -387,24 +377,19 @@ END:VCARD`;
         foreground: "#000000"
     });
 
-    // Masukkan canvas QR asli ke container
     container.appendChild(qr.canvas);
     qr.canvas.style.borderRadius = "20px";
 
-    // === Step 2 — Replace pixel hitam menjadi gradient ===
     const canvas = qr.canvas;
     const ctx = canvas.getContext("2d");
 
-    // Buat gradient
     const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
     grad.addColorStop(0, "#1D5CFF");
     grad.addColorStop(1, "#001540");
 
-    // Ambil pixel QR
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imgData.data;
 
-    // Buat canvas overlay untuk gradient-only
     const gradCanvas = document.createElement("canvas");
     gradCanvas.width = canvas.width;
     gradCanvas.height = canvas.height;
@@ -413,16 +398,13 @@ END:VCARD`;
     gctx.fillStyle = grad;
     gctx.fillRect(0, 0, gradCanvas.width, gradCanvas.height);
 
-    // Ambil pixel gradient
     const gradData = gctx.getImageData(0, 0, gradCanvas.width, gradCanvas.height).data;
 
-    // Replace pixel hitam dari QR dengan pixel gradient
     for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
         const g = data[i + 1];
         const b = data[i + 2];
 
-        // Deteksi pixel hitam (QR block)
         if (r < 50 && g < 50 && b < 50) {
             data[i] = gradData[i];
             data[i + 1] = gradData[i + 1];
@@ -430,10 +412,8 @@ END:VCARD`;
         }
     }
 
-    // Tulis ulang pixel QR
     ctx.putImageData(imgData, 0, 0);
 
-    // === UI Update ===
     document.getElementById("logo").src = logos[type];
     document.getElementById("cardTitle").innerText = title;
     document.getElementById("caption").innerText = captionText;
@@ -442,25 +422,21 @@ END:VCARD`;
 
 /* ------------------ DOWNLOAD ------------------ */
 function downloadCard() {
-    const card = document.getElementById("cardWrapper"); // ⬅ hanya kartu, tanpa tombol
+    const card = document.getElementById("cardWrapper");
 
     html2canvas(card, {
         scale: 4,
         backgroundColor: "#ffffff",
         useCORS: true,
         onclone: (doc) => {
-            // Ambil QR pada DOM clone
             const q = doc.getElementById("qrcode").querySelector("canvas");
-
-            // Boost ketajaman pada hasil render saja
             if (q) {
                 q.style.filter = "contrast(230%) brightness(140%) saturate(130%)";
             }
 
-            // Hilangkan bayangan (biar lebih clean)
             const wrapper = doc.getElementById("cardWrapper");
             wrapper.style.boxShadow = "none";
-            wrapper.style.background = "#ffffff"; // hasil download background putih solid
+            wrapper.style.background = "#ffffff";
         }
     })
     .then((cv) => {
@@ -471,11 +447,10 @@ function downloadCard() {
     });
 }
 
-/* -----------------------------
-   THEME: AUTO + MANUAL TOGGLE
------------------------------ */
+/* ------------------------------
+   THEME LOGIC
+------------------------------ */
 
-// load preference
 (function() {
     const saved = localStorage.getItem("theme-mode");
 
@@ -488,17 +463,17 @@ function downloadCard() {
         document.getElementById("themeIcon").textContent = "🌞";
     }
     else {
-        // AUTO FOLLOW SYSTEM
         updateAutoTheme();
         window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", updateAutoTheme);
     }
 })();
 
 function updateAutoTheme() {
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const html = document.documentElement;
     const icon = document.getElementById("themeIcon");
 
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    if (isDark) {
         html.classList.remove("light");
         html.classList.add("dark");
         icon.textContent = "🌞";
@@ -518,15 +493,13 @@ function toggleTheme() {
         html.classList.add("light");
         icon.textContent = "🌙";
         localStorage.setItem("theme-mode", "light");
-    } 
-    else {
+    } else {
         html.classList.remove("light");
         html.classList.add("dark");
         icon.textContent = "🌞";
         localStorage.setItem("theme-mode", "dark");
     }
 }
-
 </script>
 
 </body>
