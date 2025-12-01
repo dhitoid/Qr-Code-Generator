@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Code Generator - by Dhito</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QR Code Generator - By Dhito</title>
 
 <style>
     body {
         margin: 0;
-        font-family: "Inter", sans-serif;
-        background: #f3f3f3;
-        color: #333;
         padding: 20px;
+        background: linear-gradient(145deg, #e3f2fd, #f0f4ff);
+        font-family: "Inter", sans-serif;
     }
 
     .container {
         max-width: 520px;
         margin: auto;
-        background: #ffffffaa;
-        backdrop-filter: blur(18px);
-        padding: 20px;
-        border-radius: 18px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        padding: 25px;
+        border-radius: 22px;
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 18px 45px rgba(0,0,0,0.12);
     }
 
     h2 {
         text-align: center;
         margin-bottom: 20px;
-        font-weight: 700;
-    }
-
-    .input-group {
-        margin-bottom: 18px;
+        font-weight: 800;
+        font-size: 26px;
+        color: #333;
     }
 
     label {
@@ -42,221 +39,245 @@
 
     select, input, textarea {
         width: 100%;
-        padding: 12px;
-        border-radius: 12px;
-        border: 1px solid #ddd;
+        padding: 14px;
+        border-radius: 14px;
+        border: none;
+        background: #ffffffcc;
+        margin-bottom: 15px;
         font-size: 15px;
-        outline: none;
-        background: #fafafa;
     }
 
     button {
         width: 100%;
         padding: 14px;
         border: none;
-        font-size: 16px;
-        border-radius: 12px;
-        background: #0077ff;
+        border-radius: 14px;
+        background: #007aff;
         color: white;
+        font-size: 17px;
+        font-weight: 600;
         cursor: pointer;
-        transition: 0.2s;
+        margin-top: 10px;
     }
 
-    button:hover {
-        background: #005cd1;
-    }
-
-    .qr-box {
+    #previewCard {
+        display: none;
         margin-top: 25px;
         text-align: center;
     }
 
+    .card {
+        width: 300px;
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(15px);
+        padding: 20px;
+        border-radius: 20px;
+        margin: auto;
+        box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+    }
+
+    .card-logo {
+        width: 60px;
+        margin-bottom: 10px;
+    }
+
+    .card-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .card-caption {
+        margin-top: 12px;
+        font-size: 14px;
+        opacity: 0.7;
+    }
+
     #qrcode canvas {
         margin: auto;
-        padding: 12px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
     }
 
     .download-btn {
-        margin-top: 15px;
-        background: #00b894;
+        background: #00c48f;
+        margin-top: 10px;
     }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>QR Code Generator</h2>
+    <h2>QR Generator by Dhito</h2>
 
-    <div class="input-group">
-        <label>Jenis QR</label>
-        <select id="qrType" onchange="updateFields()">
-            <option value="link">Link / URL</option>
-            <option value="wa">WhatsApp</option>
-            <option value="ig">Instagram</option>
-            <option value="maps">Lokasi Google Maps</option>
-            <option value="wifi">WiFi</option>
-            <option value="vcard">vCard Kontak</option>
-            <option value="email">Email</option>
-            <option value="sms">SMS</option>
-            <option value="text">Text Biasa</option>
-        </select>
-    </div>
+    <label>Jenis QR</label>
+    <select id="qrType" onchange="updateFields()">
+        <option value="wa">WhatsApp</option>
+        <option value="ig">Instagram</option>
+        <option value="maps">Google Maps</option>
+        <option value="wifi">WiFi</option>
+        <option value="vcard">vCard Kontak</option>
+        <option value="link">Link / URL</option>
+        <option value="text">Text</option>
+    </select>
 
     <div id="formFields"></div>
 
-    <button onclick="generateQR()">Generate QR Code</button>
+    <button onclick="generateQR()">Generate QR</button>
 
-    <div class="qr-box">
-        <div id="qrcode"></div>
-        <button id="downloadBtn" class="download-btn" style="display:none" onclick="downloadQR()">Download PNG</button>
+    <div id="previewCard">
+        <div id="cardWrapper" class="card">
+            <img id="logo" class="card-logo">
+            <div id="cardTitle" class="card-title"></div>
+            <div id="qrcode"></div>
+            <div id="caption" class="card-caption"></div>
+        </div>
+
+        <button class="download-btn" onclick="downloadCard()">Download QR Card</button>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 <script>
+const logos = {
+    wa: "https://cdn-icons-png.flaticon.com/512/733/733585.png",
+    ig: "https://cdn-icons-png.flaticon.com/512/2111/2111463.png",
+    maps: "https://cdn-icons-png.flaticon.com/512/535/535239.png",
+    wifi: "https://cdn-icons-png.flaticon.com/512/93/93158.png",
+    link: "https://cdn-icons-png.flaticon.com/512/84/84380.png",
+    vcard: "https://cdn-icons-png.flaticon.com/512/1828/1828479.png",
+    text: "https://cdn-icons-png.flaticon.com/512/1827/1827955.png"
+};
+
 function updateFields() {
     let type = document.getElementById("qrType").value;
-    let form = document.getElementById("formFields");
+    let f = document.getElementById("formFields");
 
     let html = "";
 
-    if (type === "link") {
-        html = `<label>Masukkan URL</label>
-        <input id="data" placeholder="https://...">`;
-    }
-
     if (type === "wa") {
-        html = `<label>Nomor WhatsApp</label>
-        <input id="waNum" placeholder="6281234567890">
-        <label>Pesan (opsional)</label>
-        <input id="waMsg" placeholder="Halo, saya tertarik...">`;
+        html = `
+            <label>No WhatsApp</label>
+            <input id="waNum" placeholder="628123456789">
+            <label>Pesan</label>
+            <input id="waMsg" placeholder="Halo...">
+        `;
     }
-
     if (type === "ig") {
-        html = `<label>Username Instagram</label>
-        <input id="igUser" placeholder="username">`;
+        html = `<label>Username IG</label><input id="igUser">`;
     }
-
     if (type === "maps") {
-        html = `<label>Link Google Maps</label>
-        <input id="maps" placeholder="https://maps.app.goo.gl/...">`;
+        html = `<label>Link Google Maps</label><input id="maps">`;
     }
-
     if (type === "wifi") {
         html = `
-        <label>Nama WiFi (SSID)</label>
-        <input id="ssid">
-        <label>Password</label>
-        <input id="pass">
-        <label>Keamanan</label>
-        <select id="security"><option>WPA</option><option>WEP</option><option>None</option></select>`;
+            <label>SSID</label><input id="ssid">
+            <label>Password</label><input id="pass">
+            <label>Keamanan</label>
+            <select id="security"><option>WPA</option><option>WEP</option><option>None</option></select>
+        `;
     }
-
     if (type === "vcard") {
         html = `
-        <label>Nama</label><input id="vname">
-        <label>No HP</label><input id="vphone">
-        <label>Email</label><input id="vmail">`;
+            <label>Nama</label><input id="vname">
+            <label>No HP</label><input id="vphone">
+            <label>Email</label><input id="vmail">
+        `;
     }
-
-    if (type === "email") {
-        html = `
-        <label>Email Tujuan</label><input id="emailTo">
-        <label>Subject</label><input id="emailSub">
-        <label>Isi Pesan</label><textarea id="emailBody"></textarea>`;
+    if (type === "link") {
+        html = `<label>URL</label><input id="data" placeholder="https://...">`;
     }
-
-    if (type === "sms") {
-        html = `
-        <label>No HP</label><input id="smsNum">
-        <label>Pesan</label><textarea id="smsMsg"></textarea>`;
-    }
-
     if (type === "text") {
         html = `<label>Teks</label><textarea id="textData"></textarea>`;
     }
 
-    form.innerHTML = html;
+    f.innerHTML = html;
 }
 
 updateFields();
 
-let qrcode;
-
 function generateQR() {
     let type = document.getElementById("qrType").value;
     let text = "";
+    let title = "";
+    let captionText = "";
 
-    switch(type) {
-        case "link":
-            text = document.getElementById("data").value;
-            break;
+    if (type === "wa") {
+        let num = document.getElementById("waNum").value;
+        let msg = encodeURIComponent(document.getElementById("waMsg").value);
+        text = `https://wa.me/${num}?text=${msg}`;
+        title = "WhatsApp Message";
+        captionText = "Scan untuk membuka WhatsApp";
+    }
 
-        case "wa":
-            let num = document.getElementById("waNum").value;
-            let msg = encodeURIComponent(document.getElementById("waMsg").value);
-            text = `https://wa.me/${num}?text=${msg}`;
-            break;
+    if (type === "ig") {
+        text = `https://instagram.com/${document.getElementById("igUser").value}`;
+        title = "Instagram Profile";
+        captionText = "Scan untuk membuka Instagram";
+    }
 
-        case "ig":
-            text = `https://instagram.com/${document.getElementById("igUser").value}`;
-            break;
+    if (type === "maps") {
+        text = document.getElementById("maps").value;
+        title = "Google Maps";
+        captionText = "Scan untuk membuka lokasi";
+    }
 
-        case "maps":
-            text = document.getElementById("maps").value;
-            break;
+    if (type === "wifi") {
+        let S = document.getElementById("ssid").value;
+        let P = document.getElementById("pass").value;
+        let T = document.getElementById("security").value;
+        text = `WIFI:T:${T};S:${S};P:${P};;`;
+        title = "WiFi Connect";
+        captionText = "Scan untuk konek WiFi";
+    }
 
-        case "wifi":
-            let ssid = document.getElementById("ssid").value;
-            let pass = document.getElementById("pass").value;
-            let sec = document.getElementById("security").value;
-            text = `WIFI:T:${sec};S:${ssid};P:${pass};;`;
-            break;
-
-        case "vcard":
-            text =
+    if (type === "vcard") {
+        text =
 `BEGIN:VCARD
 VERSION:3.0
 FN:${document.getElementById("vname").value}
 TEL:${document.getElementById("vphone").value}
 EMAIL:${document.getElementById("vmail").value}
 END:VCARD`;
-            break;
+        title = "Kontak vCard";
+        captionText = "Scan untuk menyimpan kontak";
+    }
 
-        case "email":
-            text = `mailto:${document.getElementById("emailTo").value}?subject=${encodeURIComponent(document.getElementById("emailSub").value)}&body=${encodeURIComponent(document.getElementById("emailBody").value)}`;
-            break;
+    if (type === "link") {
+        text = document.getElementById("data").value;
+        title = "Website Link";
+        captionText = "Scan untuk membuka link";
+    }
 
-        case "sms":
-            text = `sms:${document.getElementById("smsNum").value}?body=${encodeURIComponent(document.getElementById("smsMsg").value)}`;
-            break;
-
-        case "text":
-            text = document.getElementById("textData").value;
-            break;
+    if (type === "text") {
+        text = document.getElementById("textData").value;
+        title = "Text QR";
+        captionText = "Scan untuk membaca teks";
     }
 
     document.getElementById("qrcode").innerHTML = "";
-
-    qrcode = new QRCode(document.getElementById("qrcode"), {
+    new QRCode(document.getElementById("qrcode"), {
         text: text,
-        width: 230,
-        height: 230
+        width: 200,
+        height: 200
     });
 
-    document.getElementById("downloadBtn").style.display = "block";
+    document.getElementById("logo").src = logos[type];
+    document.getElementById("cardTitle").innerText = title;
+    document.getElementById("caption").innerText = captionText;
+    document.getElementById("previewCard").style.display = "block";
 }
 
-function downloadQR() {
-    let canvas = document.querySelector("#qrcode canvas");
-    let link = document.createElement("a");
-    link.download = "qrcode.png";
-    link.href = canvas.toDataURL();
-    link.click();
+function downloadCard() {
+    const card = document.getElementById("cardWrapper");
+
+    html2canvas(card).then(canvas => {
+        let link = document.createElement("a");
+        link.download = "qr-card.png";
+        link.href = canvas.toDataURL();
+        link.click();
+    });
 }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
+
 </body>
 </html>
