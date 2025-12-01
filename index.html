@@ -312,42 +312,62 @@ END:VCARD`;
     const container = document.getElementById("qrcode");
     container.innerHTML = "";
 
-    // Canvas QR baru
-    const canvas = document.createElement("canvas");
-    canvas.width = 260;
-    canvas.height = 260;
-    canvas.style.borderRadius = "20px";
-    container.appendChild(canvas);
-
+    // === Step 1 — Biarkan QRious buat QR aslinya ===
     const qr = new QRious({
-        element: canvas,
         value: text,
         size: 260,
         level: "H",
         background: "transparent",
-        foreground: "#000" // JANGAN WARNA LAIN
+        foreground: "#000000"
     });
 
-    // Gradient replacement pixel
+    // Masukkan canvas QR asli ke container
+    container.appendChild(qr.canvas);
+    qr.canvas.style.borderRadius = "20px";
+
+    // === Step 2 — Replace pixel hitam menjadi gradient ===
+    const canvas = qr.canvas;
     const ctx = canvas.getContext("2d");
-    const grad = ctx.createLinearGradient(0, 0, 260, 260);
+
+    // Buat gradient
+    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
     grad.addColorStop(0, "#1D5CFF");
     grad.addColorStop(1, "#001540");
 
-    let imgData = ctx.getImageData(0, 0, 260, 260);
-    let data = imgData.data;
+    // Ambil pixel QR
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imgData.data;
 
+    // Buat canvas overlay untuk gradient-only
+    const gradCanvas = document.createElement("canvas");
+    gradCanvas.width = canvas.width;
+    gradCanvas.height = canvas.height;
+
+    const gctx = gradCanvas.getContext("2d");
+    gctx.fillStyle = grad;
+    gctx.fillRect(0, 0, gradCanvas.width, gradCanvas.height);
+
+    // Ambil pixel gradient
+    const gradData = gctx.getImageData(0, 0, gradCanvas.width, gradCanvas.height).data;
+
+    // Replace pixel hitam dari QR dengan pixel gradient
     for (let i = 0; i < data.length; i += 4) {
-        // detect black pixel (QR)
-        if (data[i] < 50 && data[i+1] < 50 && data[i+2] < 50) {
-            let x = (i / 4) % 260;
-            let y = Math.floor((i / 4) / 260);
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
 
-            ctx.fillStyle = grad;
-            ctx.fillRect(x, y, 1, 1);
+        // Deteksi pixel hitam (QR block)
+        if (r < 50 && g < 50 && b < 50) {
+            data[i] = gradData[i];
+            data[i + 1] = gradData[i + 1];
+            data[i + 2] = gradData[i + 2];
         }
     }
 
+    // Tulis ulang pixel QR
+    ctx.putImageData(imgData, 0, 0);
+
+    // === UI Update ===
     document.getElementById("logo").src = logos[type];
     document.getElementById("cardTitle").innerText = title;
     document.getElementById("caption").innerText = captionText;
