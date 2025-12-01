@@ -6,105 +6,136 @@
 <title>QR Code Generator - By Dhito</title>
 
 <style>
-    body {
-        margin: 0;
-        padding: 20px;
-        background: linear-gradient(145deg, #e3f2fd, #f0f4ff);
-        font-family: "Inter", sans-serif;
-    }
+/* ------------------------------
+   THEME (AUTO LIGHT/DARK)
+------------------------------ */
+:root {
+    --bg: #f0f4ff;
+    --card-bg: rgba(255,255,255,0.65);
+    --text: #222;
+    --shadow: rgba(0,0,0,0.15);
+}
 
-    .container {
-        max-width: 520px;
-        margin: auto;
-        padding: 25px;
-        border-radius: 22px;
-        backdrop-filter: blur(20px);
-        background: rgba(255, 255, 255, 0.6);
-        box-shadow: 0 18px 45px rgba(0,0,0,0.12);
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0d0d0d;
+        --card-bg: rgba(20,20,20,0.6);
+        --text: #fff;
+        --shadow: rgba(0,0,0,0.7);
     }
+}
 
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-weight: 800;
-        font-size: 26px;
-        color: #333;
-    }
+/* ------------------------------
+   GLOBAL STYLE
+------------------------------ */
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: "Inter", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: .4s ease;
+    -webkit-font-smoothing: antialiased;
+}
 
-    label {
-        font-weight: 600;
-        margin-bottom: 6px;
-        display: block;
-    }
-
-    select, input, textarea {
-        width: 100%;
-        padding: 14px;
-        border-radius: 14px;
-        border: none;
-        background: #ffffffcc;
-        margin-bottom: 15px;
-        font-size: 15px;
-    }
-
-    button {
-        width: 100%;
-        padding: 14px;
-        border: none;
-        border-radius: 14px;
-        background: #007aff;
-        color: white;
-        font-size: 17px;
-        font-weight: 600;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-
-    #previewCard {
-        display: none;
-        margin-top: 25px;
-        text-align: center;
-    }
-
-    .card {
-        width: 300px;
-        background: rgba(255,255,255,0.85);
-        backdrop-filter: blur(15px);
-        padding: 20px;
-        border-radius: 20px;
-        margin: auto;
-        box-shadow: 0 10px 35px rgba(0,0,0,0.15);
-    }
-
-    .card-logo {
-        width: 60px;
-        margin-bottom: 10px;
-    }
-
-    .card-title {
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 12px;
-    }
-
-    .card-caption {
-        margin-top: 12px;
-        font-size: 14px;
-        opacity: 0.7;
-    }
-
-    #qrcode canvas {
-        margin: auto;
-    }
-
-    .download-btn {
-        background: #00c48f;
-        margin-top: 10px;
-    }
-    
-    .container, .card {
-    -webkit-backdrop-filter: blur(20px);
+.container {
+    max-width: 520px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 20px;
+    background: var(--card-bg);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 18px 45px var(--shadow);
+    animation: fade .8s ease;
+}
+
+@keyframes fade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 800;
+    font-size: 26px;
+}
+
+/* Inputs */
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+select, input, textarea {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    background: rgba(255,255,255,0.7);
+    margin-bottom: 15px;
+    font-size: 15px;
+    transition: .2s;
+}
+
+@media (prefers-color-scheme: dark) {
+    select, input, textarea {
+        background: rgba(40,40,40,0.7);
+        color: white;
+    }
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    background: #007aff;
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: .2s;
+}
+
+button:hover {
+    transform: scale(1.03);
+}
+
+/* --- QR CARD --- */
+#previewCard {
+    display: none;
+    margin-top: 25px;
+    text-align: center;
+}
+
+.card {
+    width: 300px;
+    background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 22px;
+    border-radius: 20px;
+    margin: auto;
+    box-shadow: 0 10px 35px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-logo {
+    width: 65px;
+    margin-bottom: 10px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
 }
 
 #qrcode {
@@ -115,15 +146,18 @@
 
 #qrcode canvas {
     display: block !important;
-    margin: 0 auto;
 }
 
-.card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.card-caption {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.8;
 }
 
+.download-btn {
+    background: #00c48f;
+    margin-top: 15px;
+}
 </style>
 </head>
 <body>
@@ -148,7 +182,7 @@
 
     <div id="previewCard">
         <div id="cardWrapper" class="card">
-            <img id="logo" class="card-logo">
+            <img id="logo" class="card-logo" crossorigin="anonymous">
             <div id="cardTitle" class="card-title"></div>
             <div id="qrcode"></div>
             <div id="caption" class="card-caption"></div>
@@ -159,7 +193,10 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
+
 <script>
+/* LOGO FIX CORS */
 const logos = {
     wa: "https://cdn-icons-png.flaticon.com/512/733/733585.png?raw=1",
     ig: "https://cdn-icons-png.flaticon.com/512/2111/2111463.png?raw=1",
@@ -170,88 +207,71 @@ const logos = {
     text: "https://cdn-icons-png.flaticon.com/512/1827/1827955.png?raw=1"
 };
 
+/* ------------------ FORM HANDLER ------------------ */
 function updateFields() {
     let type = document.getElementById("qrType").value;
     let f = document.getElementById("formFields");
-
     let html = "";
 
-    if (type === "wa") {
-        html = `
-            <label>No WhatsApp</label>
-            <input id="waNum" placeholder="628123456789">
-            <label>Pesan</label>
-            <input id="waMsg" placeholder="Halo...">
-        `;
-    }
-    if (type === "ig") {
-        html = `<label>Username IG</label><input id="igUser">`;
-    }
-    if (type === "maps") {
-        html = `<label>Link Google Maps</label><input id="maps">`;
-    }
-    if (type === "wifi") {
-        html = `
-            <label>SSID</label><input id="ssid">
-            <label>Password</label><input id="pass">
-            <label>Keamanan</label>
-            <select id="security"><option>WPA</option><option>WEP</option><option>None</option></select>
-        `;
-    }
-    if (type === "vcard") {
-        html = `
-            <label>Nama</label><input id="vname">
-            <label>No HP</label><input id="vphone">
-            <label>Email</label><input id="vmail">
-        `;
-    }
-    if (type === "link") {
-        html = `<label>URL</label><input id="data" placeholder="https://...">`;
-    }
-    if (type === "text") {
-        html = `<label>Teks</label><textarea id="textData"></textarea>`;
-    }
+    if (type === "wa") html = `
+        <label>No WhatsApp</label>
+        <input id="waNum" placeholder="628123456789">
+        <label>Pesan</label>
+        <input id="waMsg" placeholder="Halo...">
+    `;
+
+    if (type === "ig") html = `<label>Username IG</label><input id="igUser">`;
+
+    if (type === "maps") html = `<label>Link Google Maps</label><input id="maps">`;
+
+    if (type === "wifi") html = `
+        <label>SSID</label><input id="ssid">
+        <label>Password</label><input id="pass">
+        <label>Keamanan</label>
+        <select id="security"><option>WPA</option><option>WEP</option><option>None</option></select>
+    `;
+
+    if (type === "vcard") html = `
+        <label>Nama</label><input id="vname">
+        <label>No HP</label><input id="vphone">
+        <label>Email</label><input id="vmail">
+    `;
+
+    if (type === "link") html = `<label>URL</label><input id="data" placeholder="https://...">`;
+
+    if (type === "text") html = `<label>Teks</label><textarea id="textData"></textarea>`;
 
     f.innerHTML = html;
 }
-
 updateFields();
 
+/* ------------------ QR GENERATE ------------------ */
 function generateQR() {
     let type = document.getElementById("qrType").value;
     let text = "";
     let title = "";
-    let captionText = "";
+    let caption = "";
 
     if (type === "wa") {
-        let num = document.getElementById("waNum").value;
-        let msg = encodeURIComponent(document.getElementById("waMsg").value);
-        text = `https://wa.me/${num}?text=${msg}`;
+        text = `https://wa.me/${document.getElementById("waNum").value}?text=${encodeURIComponent(document.getElementById("waMsg").value)}`;
         title = "WhatsApp Message";
-        captionText = "Scan untuk membuka WhatsApp";
+        caption = "Scan untuk membuka WhatsApp";
     }
-
     if (type === "ig") {
         text = `https://instagram.com/${document.getElementById("igUser").value}`;
         title = "Instagram Profile";
-        captionText = "Scan untuk membuka Instagram";
+        caption = "Scan untuk membuka Instagram";
     }
-
     if (type === "maps") {
         text = document.getElementById("maps").value;
         title = "Google Maps";
-        captionText = "Scan untuk membuka lokasi";
+        caption = "Scan untuk membuka lokasi";
     }
-
     if (type === "wifi") {
-        let S = document.getElementById("ssid").value;
-        let P = document.getElementById("pass").value;
-        let T = document.getElementById("security").value;
-        text = `WIFI:T:${T};S:${S};P:${P};;`;
+        text = `WIFI:T:${document.getElementById("security").value};S:${document.getElementById("ssid").value};P:${document.getElementById("pass").value};;`;
         title = "WiFi Connect";
-        captionText = "Scan untuk konek WiFi";
+        caption = "Scan untuk konek WiFi";
     }
-
     if (type === "vcard") {
         text =
 `BEGIN:VCARD
@@ -261,21 +281,20 @@ TEL:${document.getElementById("vphone").value}
 EMAIL:${document.getElementById("vmail").value}
 END:VCARD`;
         title = "Kontak vCard";
-        captionText = "Scan untuk menyimpan kontak";
+        caption = "Scan untuk menyimpan kontak";
     }
-
     if (type === "link") {
         text = document.getElementById("data").value;
         title = "Website Link";
-        captionText = "Scan untuk membuka link";
+        caption = "Scan untuk membuka link";
     }
-
     if (type === "text") {
         text = document.getElementById("textData").value;
         title = "Text QR";
-        captionText = "Scan untuk membaca teks";
+        caption = "Scan untuk membaca teks";
     }
 
+    // Render QR
     document.getElementById("qrcode").innerHTML = "";
     new QRCode(document.getElementById("qrcode"), {
         text: text,
@@ -283,13 +302,15 @@ END:VCARD`;
         height: 200
     });
 
+    // Set data card
     document.getElementById("logo").src = logos[type];
     document.getElementById("cardTitle").innerText = title;
-    document.getElementById("caption").innerText = captionText;
+    document.getElementById("caption").innerText = caption;
+
     document.getElementById("previewCard").style.display = "block";
 }
 
-// FIX download card termasuk logo
+/* ------------------ DOWNLOAD ------------------ */
 function downloadCard() {
     const card = document.getElementById("cardWrapper");
 
@@ -306,7 +327,6 @@ function downloadCard() {
     });
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
 
 </body>
 </html>
