@@ -25,9 +25,6 @@
     }
 }
 
-/* ------------------------------
-   GLOBAL STYLE
------------------------------- */
 body {
     margin: 0;
     padding: 20px;
@@ -146,6 +143,13 @@ button:hover {
 
 #qrcode canvas {
     display: block !important;
+    border-radius: 20px; /* ROUNDED QR */
+    animation: pop .35s ease;
+}
+
+@keyframes pop {
+    from { transform: scale(.85); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
 }
 
 .card-caption {
@@ -198,13 +202,13 @@ button:hover {
 <script>
 /* LOGO FIX CORS */
 const logos = {
-    wa: "https://cdn-icons-png.flaticon.com/512/733/733585.png?raw=1",
-    ig: "https://cdn-icons-png.flaticon.com/512/2111/2111463.png?raw=1",
-    maps: "https://cdn-icons-png.flaticon.com/512/535/535239.png?raw=1",
-    wifi: "https://cdn-icons-png.flaticon.com/512/93/93158.png?raw=1",
-    link: "https://cdn-icons-png.flaticon.com/512/84/84380.png?raw=1",
-    vcard: "https://cdn-icons-png.flaticon.com/512/1828/1828479.png?raw=1",
-    text: "https://cdn-icons-png.flaticon.com/512/1827/1827955.png?raw=1"
+    wa: "https://cdn-icons-png.flaticon.com/512/733/733585.png",
+    ig: "https://cdn-icons-png.flaticon.com/512/2111/2111463.png",
+    maps: "https://cdn-icons-png.flaticon.com/512/535/535239.png",
+    wifi: "https://cdn-icons-png.flaticon.com/512/93/93158.png",
+    link: "https://cdn-icons-png.flaticon.com/512/84/84380.png",
+    vcard: "https://cdn-icons-png.flaticon.com/512/1828/1828479.png",
+    text: "https://cdn-icons-png.flaticon.com/512/1827/1827955.png"
 };
 
 /* ------------------ FORM HANDLER ------------------ */
@@ -307,31 +311,44 @@ END:VCARD`;
 
     const container = document.getElementById("qrcode");
 
-    // FIX SAFARI — hapus SEMUA elemen QR (canvas & img)
-    while (container.firstChild) {
-        container.removeChild(container.firstChild);
-    }
+    /* Hapus QR lama (canvas/img) */
+    while (container.firstChild) container.removeChild(container.firstChild);
 
-    // Generate QR baru
-    new QRCode(container, {
+    /* GRADIENT ROUNDED QR */
+    const qr = new QRCode(container, {
         text: text,
         width: 200,
         height: 200,
+        colorDark: "#000000",
+        colorLight: "transparent",
         useSVG: false
     });
+
+    setTimeout(() => {
+        const canvas = container.querySelector("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const grad = ctx.createLinearGradient(0,0,200,200);
+        grad.addColorStop(0, "#111");
+        grad.addColorStop(1, "#007aff");
+
+        ctx.globalCompositeOperation = "source-in";
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+    }, 50);
 
     document.getElementById("logo").src = logos[type];
     document.getElementById("cardTitle").innerText = title;
     document.getElementById("caption").innerText = captionText;
     document.getElementById("previewCard").style.display = "block";
 }
+
 /* ------------------ DOWNLOAD ------------------ */
 function downloadCard() {
     const card = document.getElementById("cardWrapper");
 
     html2canvas(card, {
         useCORS: true,
-        allowTaint: false,
         backgroundColor: null,
         scale: 3
     }).then(canvas => {
