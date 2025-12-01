@@ -250,28 +250,37 @@ function generateQR() {
     let type = document.getElementById("qrType").value;
     let text = "";
     let title = "";
-    let caption = "";
+    let captionText = "";
 
     if (type === "wa") {
-        text = `https://wa.me/${document.getElementById("waNum").value}?text=${encodeURIComponent(document.getElementById("waMsg").value)}`;
+        let num = document.getElementById("waNum").value;
+        let msg = encodeURIComponent(document.getElementById("waMsg").value);
+        text = `https://wa.me/${num}?text=${msg}`;
         title = "WhatsApp Message";
-        caption = "Scan untuk membuka WhatsApp";
+        captionText = "Scan untuk membuka WhatsApp";
     }
+
     if (type === "ig") {
         text = `https://instagram.com/${document.getElementById("igUser").value}`;
         title = "Instagram Profile";
-        caption = "Scan untuk membuka Instagram";
+        captionText = "Scan untuk membuka Instagram";
     }
+
     if (type === "maps") {
         text = document.getElementById("maps").value;
         title = "Google Maps";
-        caption = "Scan untuk membuka lokasi";
+        captionText = "Scan untuk membuka lokasi";
     }
+
     if (type === "wifi") {
-        text = `WIFI:T:${document.getElementById("security").value};S:${document.getElementById("ssid").value};P:${document.getElementById("pass").value};;`;
+        let S = document.getElementById("ssid").value;
+        let P = document.getElementById("pass").value;
+        let T = document.getElementById("security").value;
+        text = `WIFI:T:${T};S:${S};P:${P};;`;
         title = "WiFi Connect";
-        caption = "Scan untuk konek WiFi";
+        captionText = "Scan untuk konek WiFi";
     }
+
     if (type === "vcard") {
         text =
 `BEGIN:VCARD
@@ -281,35 +290,41 @@ TEL:${document.getElementById("vphone").value}
 EMAIL:${document.getElementById("vmail").value}
 END:VCARD`;
         title = "Kontak vCard";
-        caption = "Scan untuk menyimpan kontak";
+        captionText = "Scan untuk menyimpan kontak";
     }
+
     if (type === "link") {
         text = document.getElementById("data").value;
         title = "Website Link";
-        caption = "Scan untuk membuka link";
+        captionText = "Scan untuk membuka link";
     }
+
     if (type === "text") {
         text = document.getElementById("textData").value;
         title = "Text QR";
-        caption = "Scan untuk membaca teks";
+        captionText = "Scan untuk membaca teks";
     }
 
-    // Render QR
-    document.getElementById("qrcode").innerHTML = "";
-    new QRCode(document.getElementById("qrcode"), {
+    const container = document.getElementById("qrcode");
+
+    // FIX SAFARI — hapus SEMUA elemen QR (canvas & img)
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+
+    // Generate QR baru
+    new QRCode(container, {
         text: text,
         width: 200,
-        height: 200
+        height: 200,
+        useSVG: false
     });
 
-    // Set data card
     document.getElementById("logo").src = logos[type];
     document.getElementById("cardTitle").innerText = title;
-    document.getElementById("caption").innerText = caption;
-
+    document.getElementById("caption").innerText = captionText;
     document.getElementById("previewCard").style.display = "block";
 }
-
 /* ------------------ DOWNLOAD ------------------ */
 function downloadCard() {
     const card = document.getElementById("cardWrapper");
