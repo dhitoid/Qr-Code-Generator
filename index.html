@@ -391,44 +391,31 @@ END:VCARD`;
 
 /* ------------------ DOWNLOAD ------------------ */
 function downloadCard() {
-    const qrContainer = document.getElementById("qrcode");
-    const oldQR = qrContainer.innerHTML;  // simpan QR lama
+    const card = document.getElementById("cardWrapper"); // ⬅ hanya kartu, tanpa tombol
 
-    // Generate QR baru khusus untuk export (super high-res)
-    const exportQR = new QRious({
-        value: qrContainer.dataset.value || "",
-        size: 1000,     // ⬅ super tajam
-        level: "H"
-    });
-
-    // Ganti QR di kartu dengan versi high-res
-    qrContainer.innerHTML = "";
-    const img = document.createElement("img");
-    img.src = exportQR.toDataURL();
-    img.style.width = "260px";        // ukuran tampilan
-    img.style.height = "260px";
-    img.style.borderRadius = "12px";
-    qrContainer.appendChild(img);
-
-    // Render kartu via html2canvas
-    html2canvas(document.getElementById("cardWrapper"), {
+    html2canvas(card, {
         scale: 4,
         backgroundColor: "#ffffff",
         useCORS: true,
         onclone: (doc) => {
+            // Ambil QR pada DOM clone
+            const q = doc.getElementById("qrcode").querySelector("canvas");
+
+            // Boost ketajaman pada hasil render saja
+            if (q) {
+                q.style.filter = "contrast(230%) brightness(140%) saturate(130%)";
+            }
+
+            // Hilangkan bayangan (biar lebih clean)
             const wrapper = doc.getElementById("cardWrapper");
             wrapper.style.boxShadow = "none";
-            wrapper.style.background = "#ffffff";
+            wrapper.style.background = "#ffffff"; // hasil download background putih solid
         }
-    }).then((canvas) => {
-
-        // Kembalikan QR ke versi asli (biar tidak merusak tampilan user)
-        qrContainer.innerHTML = oldQR;
-
-        // download hasil
+    })
+    .then((cv) => {
         const link = document.createElement("a");
         link.download = "qr-card.png";
-        link.href = canvas.toDataURL("image/png", 1.0);
+        link.href = cv.toDataURL("image/png", 1.0);
         link.click();
     });
 }
