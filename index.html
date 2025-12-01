@@ -196,7 +196,7 @@ button:hover {
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
 
 <script>
@@ -309,34 +309,36 @@ END:VCARD`;
         captionText = "Scan untuk membaca teks";
     }
 
+    /* QR container */
     const container = document.getElementById("qrcode");
+    container.innerHTML = "";
 
-    /* Hapus QR lama (canvas/img) */
-    while (container.firstChild) container.removeChild(container.firstChild);
+    /* Buat canvas baru */
+    const canvas = document.createElement("canvas");
+    canvas.width = 260;
+    canvas.height = 260;
+    canvas.style.borderRadius = "20px";
+    container.appendChild(canvas);
 
-    /* GRADIENT ROUNDED QR */
-    const qr = new QRCode(container, {
-        text: text,
-        width: 200,
-        height: 200,
-        colorDark: "#000000",
-        colorLight: "transparent",
-        useSVG: false
+    /* Generate QR pakai QRious */
+    const qr = new QRious({
+        element: canvas,
+        value: text,
+        size: 260,
+        level: "H"
     });
 
-    setTimeout(() => {
-        const canvas = container.querySelector("canvas");
-        const ctx = canvas.getContext("2d");
+    /* Gradient overlay */
+    const ctx = canvas.getContext("2d");
+    const grad = ctx.createLinearGradient(0, 0, 260, 260);
+    grad.addColorStop(0, "#1D5CFF");
+    grad.addColorStop(1, "#0A1A42");
 
-        const grad = ctx.createLinearGradient(0,0,200,200);
-        grad.addColorStop(0, "#111");
-        grad.addColorStop(1, "#007aff");
+    ctx.globalCompositeOperation = "source-in";
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 260, 260);
 
-        ctx.globalCompositeOperation = "source-in";
-        ctx.fillStyle = grad;
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-    }, 50);
-
+    /* Update card */
     document.getElementById("logo").src = logos[type];
     document.getElementById("cardTitle").innerText = title;
     document.getElementById("caption").innerText = captionText;
