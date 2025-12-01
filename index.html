@@ -391,43 +391,33 @@ END:VCARD`;
 
 /* ------------------ DOWNLOAD ------------------ */
 function downloadCard() {
-    const card = document.getElementById("previewCard");
+    const card = document.getElementById("cardWrapper"); // ⬅ hanya kartu, tanpa tombol
 
-    // Resolution multiplier
-    const scale = 4;
+    html2canvas(card, {
+        scale: 4,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        onclone: (doc) => {
+            // Ambil QR pada DOM clone
+            const q = doc.getElementById("qrcode").querySelector("canvas");
 
-    // Create high-res canvas
-    const canvas = document.createElement("canvas");
-    const rect = card.getBoundingClientRect();
-    canvas.width = rect.width * scale;
-    canvas.height = rect.height * scale;
+            // Boost ketajaman pada hasil render saja
+            if (q) {
+                q.style.filter = "contrast(230%) brightness(140%) saturate(130%)";
+            }
 
-    const ctx = canvas.getContext("2d");
-    ctx.scale(scale, scale);
-
-    // White background
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Render HTML → canvas (vector + sharp)
-html2canvas(card, {
-    backgroundColor: "#ffffff",
-    scale: scale,
-    useCORS: true,
-    onclone: (doc) => {
-        // Tingkatkan ketajaman QR sebelum dirender
-        const q = doc.getElementById("qrcode").querySelector("canvas");
-        if (q) {
-            q.style.filter = "contrast(200%) brightness(120%)";
+            // Hilangkan bayangan (biar lebih clean)
+            const wrapper = doc.getElementById("cardWrapper");
+            wrapper.style.boxShadow = "none";
+            wrapper.style.background = "#ffffff"; // hasil download background putih solid
         }
-    }
-})
-.then((cv) => {
-    const link = document.createElement("a");
-    link.download = "qr-card.png";
-    link.href = cv.toDataURL("image/png", 1.0);
-    link.click();
-});
+    })
+    .then((cv) => {
+        const link = document.createElement("a");
+        link.download = "qr-card.png";
+        link.href = cv.toDataURL("image/png", 1.0);
+        link.click();
+    });
 }
 </script>
 
