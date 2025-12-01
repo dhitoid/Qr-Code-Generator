@@ -309,36 +309,45 @@ END:VCARD`;
         captionText = "Scan untuk membaca teks";
     }
 
-    /* QR container */
     const container = document.getElementById("qrcode");
     container.innerHTML = "";
 
-    /* Buat canvas baru */
+    // Canvas QR baru
     const canvas = document.createElement("canvas");
     canvas.width = 260;
     canvas.height = 260;
     canvas.style.borderRadius = "20px";
     container.appendChild(canvas);
 
-    /* Generate QR pakai QRious */
     const qr = new QRious({
         element: canvas,
         value: text,
         size: 260,
-        level: "H"
+        level: "H",
+        background: "transparent",
+        foreground: "#000" // JANGAN WARNA LAIN
     });
 
-    /* Gradient overlay */
+    // Gradient replacement pixel
     const ctx = canvas.getContext("2d");
     const grad = ctx.createLinearGradient(0, 0, 260, 260);
     grad.addColorStop(0, "#1D5CFF");
-    grad.addColorStop(1, "#0A1A42");
+    grad.addColorStop(1, "#001540");
 
-    ctx.globalCompositeOperation = "source-in";
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 260, 260);
+    let imgData = ctx.getImageData(0, 0, 260, 260);
+    let data = imgData.data;
 
-    /* Update card */
+    for (let i = 0; i < data.length; i += 4) {
+        // detect black pixel (QR)
+        if (data[i] < 50 && data[i+1] < 50 && data[i+2] < 50) {
+            let x = (i / 4) % 260;
+            let y = Math.floor((i / 4) / 260);
+
+            ctx.fillStyle = grad;
+            ctx.fillRect(x, y, 1, 1);
+        }
+    }
+
     document.getElementById("logo").src = logos[type];
     document.getElementById("cardTitle").innerText = title;
     document.getElementById("caption").innerText = captionText;
