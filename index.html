@@ -203,6 +203,26 @@ button:hover { transform: scale(1.03); }
 .card-title { font-size: 18px; font-weight: 700; }
 .card-caption { margin-top: 12px; opacity: .8; }
 
+/* ------------------------------
+   ANIMASI DROPDOWN iOS STYLE
+------------------------------ */
+.ios-animate {
+    opacity: 0;
+    transform: translateY(-6px) scale(.97);
+    animation: iosDrop .28s cubic-bezier(.25, .46, .45, .94) forwards;
+}
+
+@keyframes iosDrop {
+    0% {
+        opacity: 0;
+        transform: translateY(-6px) scale(.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 </style>
 </head>
 <body>
@@ -295,66 +315,60 @@ document.addEventListener("click", function(e) {
 });
 
 /* ------------------ FORM HANDLER ------------------ */
+
 function updateFields() {
     let type = document.getElementById("qrType").value;
     let f = document.getElementById("formFields");
 
     let html = "";
 
-    if (type === "wa") html = `
-        <label>No WhatsApp</label>
-        <input id="waNum" class="input-glass" placeholder="628123456789">
-        <label>Pesan</label>
-        <input id="waMsg" class="input-glass" placeholder="Halo...">
-    `;
+    if (type === "wa") {
+        html = `
+            <label>No WhatsApp</label>
+            <input id="waNum" class="input-glass" placeholder="628123456789">
+            <label>Pesan</label>
+            <input id="waMsg" class="input-glass" placeholder="Halo...">
+        `;
+    }
+    if (type === "ig") {
+        html = `<label>Username IG</label><input id="igUser" class="input-glass">`;
+    }
+    if (type === "maps") {
+        html = `<label>Link Google Maps</label><input id="maps" class="input-glass">`;
+    }
+    if (type === "wifi") {
+        html = `
+            <label>SSID</label><input id="ssid" class="input-glass">
+            <label>Password</label><input id="pass" class="input-glass">
+            <label>Keamanan</label>
+            <select id="security" class="input-glass">
+                <option>WPA</option>
+                <option>WEP</option>
+                <option>None</option>
+            </select>
+        `;
+    }
+    if (type === "vcard") {
+        html = `
+            <label>Nama</label><input id="vname" class="input-glass">
+            <label>No HP</label><input id="vphone" class="input-glass">
+            <label>Email</label><input id="vmail" class="input-glass">
+        `;
+    }
+    if (type === "link") {
+        html = `<label>URL</label><input id="data" class="input-glass" placeholder="https://...">`;
+    }
+    if (type === "text") {
+        html = `<label>Teks</label><textarea id="textData" class="input-glass"></textarea>`;
+    }
 
-    if (type === "ig") html = `
-        <label>Username IG</label>
-        <input id="igUser" class="input-glass">
-    `;
-
-    if (type === "maps") html = `
-        <label>Link Google Maps</label>
-        <input id="maps" class="input-glass">
-    `;
-
-    if (type === "wifi") html = `
-        <label>SSID</label>
-        <input id="ssid" class="input-glass">
-        <label>Password</label>
-        <input id="pass" class="input-glass">
-        <label>Keamanan</label>
-        <select id="security" class="input-glass">
-            <option>WPA</option>
-            <option>WEP</option>
-            <option>None</option>
-        </select>
-    `;
-
-    if (type === "vcard") html = `
-        <label>Nama</label>
-        <input id="vname" class="input-glass">
-        <label>No HP</label>
-        <input id="vphone" class="input-glass">
-        <label>Email</label>
-        <input id="vmail" class="input-glass">
-    `;
-
-    if (type === "link") html = `
-        <label>URL</label>
-        <input id="data" class="input-glass" placeholder="https://...">
-    `;
-
-    if (type === "text") html = `
-        <label>Teks</label>
-        <textarea id="textData" class="input-glass"></textarea>
-    `;
-
-    f.innerHTML = html;
+    // Tambahkan isi + kelas animasi
+    f.innerHTML = `<div class="ios-animate">${html}</div>`;
 
     document.getElementById("previewCard").style.display = "none";
     document.getElementById("qrcode").innerHTML = "";
 }
+
 
 updateFields();
 
