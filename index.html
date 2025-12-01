@@ -376,16 +376,33 @@ END:VCARD`;
 
 /* ------------------ DOWNLOAD ------------------ */
 function downloadCard() {
-    const card = document.getElementById("cardWrapper");
+    const card = document.getElementById("previewCard");
 
+    // Resolution multiplier
+    const scale = 4;
+
+    // Create high-res canvas
+    const canvas = document.createElement("canvas");
+    const rect = card.getBoundingClientRect();
+    canvas.width = rect.width * scale;
+    canvas.height = rect.height * scale;
+
+    const ctx = canvas.getContext("2d");
+    ctx.scale(scale, scale);
+
+    // White background
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Render HTML → canvas (vector + sharp)
     html2canvas(card, {
-        useCORS: true,
         backgroundColor: null,
-        scale: 3
-    }).then(canvas => {
-        let link = document.createElement("a");
+        scale: scale,
+        useCORS: true
+    }).then((cv) => {
+        const link = document.createElement("a");
         link.download = "qr-card.png";
-        link.href = canvas.toDataURL("image/png");
+        link.href = cv.toDataURL("image/png", 1.0);
         link.click();
     });
 }
