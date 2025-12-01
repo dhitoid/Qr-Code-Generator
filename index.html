@@ -16,6 +16,52 @@
     --shadow: rgba(0,0,0,0.15);
 }
 
+/* LIGHT MODE (FORCED) */
+:root.light {
+    --bg: #f0f4ff;
+    --card-bg: rgba(255,255,255,0.65);
+    --text: #222;
+    --shadow: rgba(0,0,0,0.15);
+}
+
+/* DARK MODE (FORCED) */
+:root.dark {
+    --bg: #0d0d0d;
+    --card-bg: rgba(20,20,20,0.6);
+    --text: #fff;
+    --shadow: rgba(0,0,0,0.7);
+}
+
+/* --------------------------------
+   MANUAL THEME TOGGLE BUTTON
+-------------------------------- */
+#themeToggle {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 6px 20px var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .3s ease;
+    z-index: 99;
+}
+
+#themeToggle:hover {
+    transform: scale(1.08);
+}
+
+#themeIcon {
+    font-size: 20px;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --bg: #0d0d0d;
@@ -165,6 +211,11 @@ button:hover {
 </style>
 </head>
 <body>
+   
+   <!-- THEME TOGGLE -->
+<div id="themeToggle" onclick="toggleTheme()">
+    <span id="themeIcon">🌙</span>
+</div>
 
 <div class="container">
     <h2>QR Generator by Dhito</h2>
@@ -419,6 +470,63 @@ function downloadCard() {
         link.click();
     });
 }
+
+/* -----------------------------
+   THEME: AUTO + MANUAL TOGGLE
+----------------------------- */
+
+// load preference
+(function() {
+    const saved = localStorage.getItem("theme-mode");
+
+    if (saved === "light") {
+        document.documentElement.classList.add("light");
+        document.getElementById("themeIcon").textContent = "🌙";
+    }
+    else if (saved === "dark") {
+        document.documentElement.classList.add("dark");
+        document.getElementById("themeIcon").textContent = "🌞";
+    }
+    else {
+        // AUTO FOLLOW SYSTEM
+        updateAutoTheme();
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", updateAutoTheme);
+    }
+})();
+
+function updateAutoTheme() {
+    const html = document.documentElement;
+    const icon = document.getElementById("themeIcon");
+
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        html.classList.remove("light");
+        html.classList.add("dark");
+        icon.textContent = "🌞";
+    } else {
+        html.classList.remove("dark");
+        html.classList.add("light");
+        icon.textContent = "🌙";
+    }
+}
+
+function toggleTheme() {
+    const html = document.documentElement;
+    const icon = document.getElementById("themeIcon");
+
+    if (html.classList.contains("dark")) {
+        html.classList.remove("dark");
+        html.classList.add("light");
+        icon.textContent = "🌙";
+        localStorage.setItem("theme-mode", "light");
+    } 
+    else {
+        html.classList.remove("light");
+        html.classList.add("dark");
+        icon.textContent = "🌞";
+        localStorage.setItem("theme-mode", "dark");
+    }
+}
+
 </script>
 
 </body>
